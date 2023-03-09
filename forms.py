@@ -20,9 +20,9 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Login')
 
 
-# class ShoppingForm(FlaskForm):
-#     description = StringField('Description', [DataRequired(), Length(max=100)])
-#     submit = SubmitField('SUBMIT')
+class CategoryForm(FlaskForm):
+    description = StringField('Description', [DataRequired(), Length(max=100)])
+    submit = SubmitField('SUBMIT')
 
 
 # class ProductForm(FlaskForm):

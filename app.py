@@ -47,8 +47,6 @@ class User(db.Model, UserMixin):
     password = db.Column("password", db.String(50), nullable=False)
 
 
-
-# ********** KATEGORIJA **************
 class Category(db.Model):
     __tablename__ = "category"
     id = db.Column(db.Integer, primary_key=True)
@@ -56,7 +54,7 @@ class Category(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     user = db.relationship("User")
 
-# ********** Uzrasai **************
+
 class Notes(db.Model):
     __tablename__ = "notes"
     id = db.Column(db.Integer, primary_key=True)
@@ -68,8 +66,8 @@ class Notes(db.Model):
     category_id = db.Column(db.Integer, db.ForeignKey("category.id"))
     category = db.relationship("Category", lazy=True)
 
-
 # ************************************* USER REGISTRATION / LOGIN ********************
+
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
@@ -134,67 +132,49 @@ def index():
 
 # ******************************** Category LIST *********************************
 
-# @app.route("/shopping")
-# def shopping_records():
-#     db.create_all()
-#     form = forms.StatusShoppingForm()
-#     if current_user.is_authenticated:
-#         page = request.args.get('page', 1, type=int)
-#         shopping_list = Shopping.query.filter_by(user_id=current_user.id).order_by(
-#             Shopping.status.desc()).paginate(page=page, per_page=9)
-#         return render_template("shoppinglist.html", status_types=ShoppingStatusType, shopping_list=shopping_list, user=current_user.user, form=form)
-#     else:
-#         return render_template("shoppinglist.html")
+@app.route("/categories")
+@login_required
+def categories():
+    db.create_all()
+    page = request.args.get('page', 1, type=int)
+    categories = Category.query.filter_by(
+        user_id=current_user.id).paginate(page=page, per_page=9)
+    return render_template("categories.html", categories=categories, user=current_user.user)
 
 
-# @app.route("/add_shopping", methods=["GET", "POST"])
-# def add_shopping():
-#     db.create_all()
-#     if current_user.is_authenticated:
-#         form = forms.ShoppingForm()
-#         if form.validate_on_submit():
-#             new_shopping = Shopping(
-#                 description=form.description.data, user_id=current_user.id)
-#             db.session.add(new_shopping)
-#             db.session.commit()
-#             flash(f"Task added!", 'success')
-#             return redirect(url_for('shopping_records'))
-#         return render_template("add_shopping.html", form=form)
-#     else:
-#         return render_template("index.html")
+@app.route("/add_category", methods=["GET", "POST"])
+@login_required
+def add_category():
+    db.create_all()
+    form = forms.CategoryForm()
+    if form.validate_on_submit():
+        new_category = Category(description=form.description.data, user_id=current_user.id)
+        db.session.add(new_category)
+        db.session.commit()
+        flash(f"Task added!", 'success')
+        return redirect(url_for('categories'))
+    return render_template("add_category.html", form=form)
 
 
-# @app.route("/update_shopping/<int:id>", methods=['GET', 'POST'])
-# @login_required
-# def update_shopping(id):
-#     form = forms.ShoppingForm()
-#     shopping = Shopping.query.get(id)
-#     if form.validate_on_submit():
-#         shopping.description = form.description.data
-#         db.session.commit()
-#         return redirect(url_for('shopping_records'))
-#     return render_template("update_shopping.html", form=form, shopping=shopping)
+@app.route("/edit_category/<int:id>", methods=['GET', 'POST'])
+@login_required
+def edit_category(id):
+    form = forms.CategoryForm()
+    category = Category.query.get(id)
+    if form.validate_on_submit():
+        category.description = form.description.data
+        db.session.commit()
+        return redirect(url_for('categories'))
+    return render_template("edit_category.html", form=form, category=category)
 
 
-# @app.route("/shopping_status/<int:id>", methods=['GET', 'POST'])
-# @login_required
-# def shopping_status(id):
-#     form = forms.StatusShoppingForm()
-#     shopping = Shopping.query.get(id)
-#     if form.validate_on_submit():
-#         shopping.status = form.status.data
-#         db.session.commit()
-#         return redirect(url_for('shopping_records'))
-#     return render_template("shoppinglist.html", form=form, shopping=shopping)
-
-
-# @app.route("/delete_shopping/<int:id>")
-# @login_required
-# def delete_shopping(id):
-#     shopping_event = Shopping.query.get(id)
-#     db.session.delete(shopping_event)
-#     db.session.commit()
-#     return redirect(url_for('shopping_records'))
+@app.route("/delete_category/<int:id>")
+@login_required
+def delete_category(id):
+    category = Category.query.get(id)
+    db.session.delete(category)
+    db.session.commit()
+    return redirect(url_for('categories'))
 
 # ******************************** Uzrasai LIST *********************************
 
