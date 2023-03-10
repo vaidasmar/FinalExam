@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, SubmitField, DateField, PasswordField, IntegerField, BooleanField, FloatField, SelectField
-from wtforms.validators import DataRequired, Length, EqualTo, Email, ValidationError
+from wtforms import StringField, TextAreaField, SubmitField, PasswordField, IntegerField, BooleanField, SelectField
+from wtforms.validators import DataRequired, Length, EqualTo, Email
 
 
 class RegistrationForm(FlaskForm):
@@ -25,23 +25,8 @@ class CategoryForm(FlaskForm):
     submit = SubmitField('SUBMIT')
 
 
-# class ProductForm(FlaskForm):
-#     description = StringField('Product', [DataRequired(), Length(max=100)])
-#     quantity = IntegerField('Quantity', [DataRequired()])
-#     price = FloatField('Price (if you know)')
-#     unit = StringField('Unit', [Length(max=5)])
-#     submit = SubmitField('SUBMIT')
+class NotesForm(FlaskForm):
+    description = StringField('Product', [DataRequired(), Length(max=200)])
+    text = TextAreaField('Product', [DataRequired(), Length(max=200)])
+    submit = SubmitField('SUBMIT')
 
-
-# class addBudgetIncomeForm(FlaskForm):
-#     description = StringField('Description Income', [
-#                               DataRequired(), Length(max=100)])
-#     income = FloatField('Income:', [DataRequired()])
-#     submit = SubmitField('SUBMIT')
-
-
-# class addBudgetOutgoingForm(FlaskForm):
-#     description = StringField('Description Expense', [
-#                               DataRequired(), Length(max=100)])
-#     outgoing = FloatField('Expense:', [DataRequired()])
-#     submit = SubmitField('SUBMIT')

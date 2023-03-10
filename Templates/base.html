@@ -46,34 +46,28 @@
       style="background-color: blueviolet"
     >
       <div class="container">
-        <a class="navbar-brand" href="/">NOTES</a>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-toggle="collapse"
-          data-target="#navbarResponsive"
-          aria-controls="navbarResponsive"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
+        <h3 class="navbar-brand">CREATE YOUR NOTES</h3>
+       
         <div class="collapse navbar-collapse" id="navbarResponsive">
           <ul class="navbar-nav ml-auto">
-            <li class="nav-item">
-              <a class="nav-link" href="/">Home</a>
-            </li>
+         
             {% if current_user.is_authenticated %}
-
+            <h3 class="navbar-brand">Wellcome {{user}}</h3>
             <li class="nav-item">
-              <a class="nav-link" href="/logout">Log Out</a>
+              <a class="btn btn-dark mr-2" href="/notes">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="btn btn-dark mr-2" href="/categories">Categories</a>
+            </li>
+            <li class="nav-item">
+              <a class="btn btn-dark" href="/logout">Log Out</a>
             </li>
             {% else %}
             <li class="nav-item">
-              <a class="nav-link" href="/register">Sign-up</a>
+              <a class="btn btn-dark mr-2" href="/register">Sign-up</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/login">Log In</a>
+              <a class="btn btn-dark" href="/login">Log In</a>
             </li>
 
             {% endif %}

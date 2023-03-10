@@ -1,0 +1,52 @@
+{% extends "base.html" %} {% block content %}
+
+<div class="container d-flex justify-content-center">
+  <a
+    class="w-25 btn btn-success me-2 btn-lg mr-3"
+    type="button"
+    href="{{ url_for('categories')}}"
+  >
+    CATEGORIES PAGE
+  </a>
+</div>
+
+<legend class="border-bottom mb-4 h4 text-muted">YOUR NOTES</legend>
+
+<div class="container d-flex">
+  <a
+    class="w-25 btn btn-primary me-2 btn-lg mr-3"
+    type="button"
+    href="{{ url_for('add_note')}}"
+  >
+    ENTER NEW NOTE
+  </a>
+</div>
+
+<div class="container mt-4 text-center">
+  {% if notes != 0 %} {% for note in notes %}
+
+  <div class="container list-group-item d-inline-flex m-2">
+    
+    <div class="container d-inline-flex m-2">
+      <div>
+      <img
+        src="https://kaunozinios.lt/wp-content/uploads/2014/08/Macaca_nigra_self-portrait.jpg"
+        alt="Image"
+        width="150px"
+      />
+      </div>
+      <div class="card-body">
+        <h3>{{note.description}}</h3>
+        <p class="btn btn-warning disabled">CATEGORY</p>
+        <p class="h5 text-muted">{{note.date.strftime('%Y-%m-%d')}}</p>
+        <p class="list-group-item card-text h4 my-3">{{note.text}}</p>
+        <a href="#" class="btn btn-primary">EDIT</a>
+        <a href="#" class="btn btn-primary">DELETE</a>
+      </div>
+    </div>
+  </div>
+
+  {% else %}
+  <h2 class="text-muted">Your Notes is Empty</h2>
+</div>
+{% endfor %} {% endif %} {% endblock content %}

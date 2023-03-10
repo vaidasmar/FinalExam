@@ -59,7 +59,7 @@ class Notes(db.Model):
     __tablename__ = "notes"
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column("description", db.String, nullable=False)
-    text = db.Column("text", db.String(250), nullable=False)
+    text = db.Column("text", db.String(500), nullable=False)
     date = db.Column(db.DateTime, nullable=True, default=datetime.now())
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     user = db.relationship("User")
@@ -133,74 +133,84 @@ def index():
 # ******************************** Category LIST *********************************
 
 @app.route("/categories")
-@login_required
 def categories():
     db.create_all()
-    page = request.args.get('page', 1, type=int)
-    categories = Category.query.filter_by(
-        user_id=current_user.id).paginate(page=page, per_page=9)
-    return render_template("categories.html", categories=categories, user=current_user.user)
+    if current_user.is_authenticated:
+        page = request.args.get('page', 1, type=int)
+        categories = Category.query.filter_by(user_id=current_user.id).paginate(page=page, per_page=8)
+        return render_template("categories.html", categories=categories, user=current_user.user)
+    else:
+        return render_template("index.html")
 
 
 @app.route("/add_category", methods=["GET", "POST"])
-@login_required
 def add_category():
     db.create_all()
-    form = forms.CategoryForm()
-    if form.validate_on_submit():
-        new_category = Category(description=form.description.data, user_id=current_user.id)
-        db.session.add(new_category)
-        db.session.commit()
-        flash(f"Task added!", 'success')
-        return redirect(url_for('categories'))
-    return render_template("add_category.html", form=form)
+    if current_user.is_authenticated:
+        form = forms.CategoryForm()
+        if form.validate_on_submit():
+            new_category = Category(
+                description=form.description.data, user_id=current_user.id)
+            db.session.add(new_category)
+            db.session.commit()
+            flash(f"Category added!", 'success')
+            return redirect(url_for('categories'))
+        return render_template("add_category.html", form=form)
+    else:
+        return render_template("index.html")
 
 
 @app.route("/edit_category/<int:id>", methods=['GET', 'POST'])
-@login_required
 def edit_category(id):
-    form = forms.CategoryForm()
-    category = Category.query.get(id)
-    if form.validate_on_submit():
-        category.description = form.description.data
-        db.session.commit()
-        return redirect(url_for('categories'))
-    return render_template("edit_category.html", form=form, category=category)
+    if current_user.is_authenticated:
+        form = forms.CategoryForm()
+        category = Category.query.get(id)
+        if form.validate_on_submit():
+            category.description = form.description.data
+            db.session.commit()
+            return redirect(url_for('categories'))
+        return render_template("edit_category.html", form=form, category=category)
+    else:
+        return render_template("index.html")
 
 
 @app.route("/delete_category/<int:id>")
-@login_required
 def delete_category(id):
-    category = Category.query.get(id)
-    db.session.delete(category)
-    db.session.commit()
-    return redirect(url_for('categories'))
+    if current_user.is_authenticated:
+        category = Category.query.get(id)
+        db.session.delete(category)
+        db.session.commit()
+        return redirect(url_for('categories'))
+    else:
+        return render_template("index.html")
 
 # ******************************** Uzrasai LIST *********************************
 
 
-# @app.route("/shopping/products/<int:id>")
-# @login_required
-# def products(id):
-#     db.create_all()
-#     form = forms.StatusProductForm()
-#     list_products = Product.query.filter_by(shopping_id=id).all()
-#     return render_template("products.html", status_types=ProductStatusType, list_products=list_products, shopping_id=id, form=form)
+@app.route("/notes")
+def notes():
+    db.create_all()
+    if current_user.is_authenticated:
+        notes = Notes.query.filter_by(user_id=current_user.id).all()
+        return render_template("notes.html", notes=notes, user=current_user.user)
+    else:
+        return render_template("index.html")
 
 
-# @app.route("/products/add/<int:id>", methods=["GET", "POST"])
-# @login_required
-# def add_product(id):
-#     db.create_all()
-#     form = forms.ProductForm()
-#     if form.validate_on_submit():
-#         new_product_line = Product(description=form.description.data, price=form.price.data,
-#                                    quantity=form.quantity.data, unit=form.unit.data, user_id=current_user.id, shopping_id=id)
-#         db.session.add(new_product_line)
-#         db.session.commit()
-#         return redirect(url_for('products', id=id))
-#     return render_template("add_product.html", form=form)
-
+@app.route("/add_notes", methods=["GET", "POST"])
+def add_note():
+    db.create_all()
+    if current_user.is_authenticated:
+        form = forms.NotesForm()
+        if form.validate_on_submit():
+            new_note = Notes(description=form.description.data, text=form.text.data,
+                             user_id=current_user.id)
+            db.session.add(new_note)
+            db.session.commit()
+            return redirect(url_for('notes'))
+        return render_template("add_note.html", form=form)
+    else:
+        return render_template("index.html")
 
 # @app.route("/products/edit/<int:id>", methods=['GET', 'POST'])
 # @login_required
