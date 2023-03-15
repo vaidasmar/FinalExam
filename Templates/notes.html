@@ -12,13 +12,28 @@
 
 <legend class="border-bottom mb-4 h4 text-muted">YOUR NOTES</legend>
 
-<div class="container d-flex">
+<div class="container d-flex justify-content-center">
   <a
     class="w-25 btn btn-primary me-2 btn-lg mr-3"
     type="button"
     href="{{ url_for('add_note')}}"
   >
     ENTER NEW NOTE
+  </a>
+  <a
+    class="w-25 btn btn-secondary me-2 btn-lg mr-3"
+    type="button"
+    href="{{ url_for('add_note')}}"
+  >
+    SEARCH BY NAME
+  </a>
+
+  <a
+    class="w-25 btn btn-secondary me-2 btn-lg mr-3"
+    type="button"
+    href="{{ url_for('add_note')}}"
+  >
+    CHOOSE CATEGORY
   </a>
 </div>
 
@@ -29,33 +44,44 @@
     <div class="container d-flex flex-column m-2">
       <div class="container d-inline-flex m-2">
         <div>
-          <img class="rounded-circle account-img" src="{{ photo }}">
+          <img
+            class="rounded-rounded account-img"
+            src="/static/images/{{ note.photo }}"
+          />
         </div>
         <div class="card-body">
           <h3>{{note.description}}</h3>
-          <p class="btn btn-warning disabled">CATEGORY</p>
+          <p class="btn btn-warning disabled w-25">{{note.category}}</p>
           <p class="h5 text-muted">{{note.date.strftime('%Y-%m-%d')}}</p>
           <p class="list-group-item card-text h4 my-3">{{note.text}}</p>
         </div>
-       
-
       </div>
-       <div class="border-top pt-2">
-          <a href="#" class="btn btn-primary w-25">EDIT</a>
-          <a href="#" class="btn btn-primary w-25">DELETE</a>
-        </div>
+      <div class="border-top pt-2">
+        <a href="{{ url_for('edit_note', id=note['id'])}}" class="btn btn-primary w-25">EDIT</a>
+        <a href="{{ url_for('delete_note', id=note['id'])}}" class="btn btn-primary w-25">DELETE</a>
+      </div>
     </div>
   </div>
-
-
 
   {% else %}
   <h2 class="text-muted">Your Notes is Empty</h2>
 </div>
 
+{% endfor %} {% endif %}
 
+<div class="mt-3 d-flex justify-content-center">
+  {% for page_num in notes.iter_pages(left_edge=1, right_edge=1, left_current=1,
+  right_current=2) %} {% if page_num %} {% if notes.page == page_num %}
+  <a class="btn btn-info mb-4 mr-2" href="{{ url_for('notes', page=page_num) }}"
+    >{{ page_num }}</a
+  >
+  {% else %}
+  <a
+    class="btn btn-outline-info mb-4 mr-2"
+    href="{{ url_for('notes', page=page_num) }}"
+    >{{ page_num }}</a
+  >
+  {% endif %} {% else %} ... {% endif %} {% endfor %}
+</div>
 
-
-
-
-{% endfor %} {% endif %} {% endblock content %}
+{% endblock content %}
