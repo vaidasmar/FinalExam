@@ -1,0 +1,21 @@
+{% extends "base.html" %} {% block content %}
+
+<form method="POST" action="#" enctype="multipart/form-data">
+  {{ form.hidden_tag() }}
+  <legend class="border-bottom mb-4 h4 text-muted">Enter New Note</legend>
+
+  <div class="form-group">
+    {{ form.photo.label() }}
+    {{ form.photo(class="form-control-file") }}
+    {% if form.photo.errors %}
+        {% for error in form.photo.errors %}
+            <span class="text-danger">{{ error }}</span></br>
+        {% endfor %}
+    {% endif %}
+</div>
+
+
+  {{ form.submit(class="btn btn-outline-info btn-lg px-5") }}
+</form>
+
+{% endblock %}
