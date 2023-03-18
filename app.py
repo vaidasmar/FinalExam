@@ -137,7 +137,8 @@ def load_user(user_id):
 @app.route("/")
 def index():
     if current_user.is_authenticated:
-        return render_template("index.html", user=current_user.user)
+        categories = Category.query.filter_by(user_id=current_user.id).all()
+        return render_template("index.html", categories=categories, user=current_user.user)
     else:
         return render_template("index.html")
 
@@ -226,19 +227,7 @@ def save_picture(form_picture):
 
     return picture_fn
 
-# ******************************** Notes LIST *********************************
-
-
-@app.route("/notes")
-def notes():
-    db.create_all()
-    if current_user.is_authenticated:
-        page = request.args.get('page', 1, type=int)
-        notes = Notes.query.filter_by(
-            user_id=current_user.id).paginate(page=page, per_page=4)
-        return render_template("notes.html", notes=notes, user=current_user.user)
-    else:
-        return render_template("index.html")
+# ******************************** FORM CLASSES *********************************
 
 
 class NoteForm(FlaskForm):
@@ -246,8 +235,49 @@ class NoteForm(FlaskForm):
     text = StringField('Text', [DataRequired(), Length(max=500)])
     photo = FileField('Add photo', validators=[
                       DataRequired(), FileAllowed(['jpg', 'png'])])
-    category = QuerySelectField('Select category', query_factory=lambda: Category.query.all(), get_label='description')
+    category = QuerySelectField('Select category', query_factory=lambda: Category.query.filter_by(
+        user_id=current_user.id).all(), get_label='description')
     submit = SubmitField('SUBMIT')
+
+
+class FilterNotesByCategory(FlaskForm):
+    category = QuerySelectField('Select category', query_factory=lambda: Category.query.filter_by(
+        user_id=current_user.id).all(), get_label='description')
+
+
+class FilterNotesByName(FlaskForm):
+    description = QuerySelectField('Select description', query_factory=lambda: Notes.query.filter_by(
+        user_id=current_user.id).all(), get_label='description')
+
+
+# ******************************** Notes LIST *********************************
+
+
+@app.route("/notes", methods=["GET", "POST"])
+def notes():
+    db.create_all()
+    form = FilterNotesByCategory()
+    form_name = FilterNotesByName()
+    if current_user.is_authenticated:
+        page = request.args.get('page', 1, type=int)
+        categories = Category.query.filter_by(
+            user_id=current_user.id).all()
+        if form.category.data:         
+            category = form.category.data           
+            notes = Notes.query.filter_by(
+                user_id=current_user.id, category=category.description).paginate(page=page, per_page=3)           
+        else:
+            notes = Notes.query.filter_by(
+                user_id=current_user.id).paginate(page=page, per_page=3)
+        if form_name.description.data:
+            description = form_name.description.data
+            seaching_name = Notes.query.filter_by(
+                user_id=current_user.id, description=description.description).paginate(page=page, per_page=3)  
+            print(description)
+            print(seaching_name)
+        return render_template("notes.html", form=form, notes=notes, categories=categories, user=current_user.user)
+    else:
+        return render_template("index.html")
 
 
 @app.route("/add_notes", methods=["GET", "POST"])
@@ -258,11 +288,9 @@ def add_note():
         if request.method == 'POST' and form.validate_on_submit():
             if form.photo.data:
                 photo = save_picture(form.photo.data)
-                Notes.photo = photo
             if form.category.data:
-                cat = form.category.data
-                print(cat.description)
-            new_note = Notes(description=form.description.data, text=form.text.data, photo=photo, category=cat.description,
+                category = form.category.data
+            new_note = Notes(description=form.description.data, text=form.text.data, photo=photo, category=category.description,
                              user_id=current_user.id)
             db.session.add(new_note)
             db.session.commit()
@@ -283,10 +311,11 @@ def edit_note(id):
             form = NoteForm()
             notes = Notes.query.get(id)
             if form.validate_on_submit():
-                if form.photo.data:
-                    notes.photo = save_picture(form.photo.data)
+                notes.photo = save_picture(form.photo.data)
                 notes.description = form.description.data
                 notes.text = form.text.data
+                category = form.category.data
+                notes.category = category.description
                 db.session.commit()
                 return redirect(url_for('notes'))
             return render_template("edit_note.html", form=form, notes=notes)

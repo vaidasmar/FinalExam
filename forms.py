@@ -32,6 +32,11 @@ class UpdatePhoto(FlaskForm):
     submit = SubmitField('SUBMIT')
 
 
+class FilterNotesByCategory(FlaskForm):
+    status = SelectField('Category', choices=[
+                         ('PENDING'), ('IN_PROGRESS'), ('COMPLETED'), ('CANCELED')])
+
+
 # class NoteForm(FlaskForm):
 #     description = StringField('Description', [DataRequired(), Length(max=200)])
 #     text = TextAreaField('Text', [DataRequired(), Length(max=500)])

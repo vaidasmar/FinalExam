@@ -22,12 +22,7 @@
       </div>
     </div>
   </div>
-
-  {% else %}
-  <h2 class="text-muted">Your Category List is Empty</h2>
-
-  {% endfor %} {% endif %}
-
+  {% endfor %}
   <div class="mt-3 d-flex justify-content-center">
     {% for page_num in categories.iter_pages(left_edge=1, right_edge=1,
     left_current=1, right_current=2) %} {% if page_num %} {% if categories.page
@@ -65,6 +60,18 @@
       BACK TO NOTES
     </a>
   </div>
-</div>
-  {% endblock content %}
 
+  {% else %}
+  <h2 class="text-muted">Your Category List is Empty</h2>
+
+  <div class="container d-flex justify-content-center">
+    <a
+      class="w-25 btn btn-success me-2 btn-lg mr-3"
+      type="button"
+      href="{{ url_for('add_category')}}"
+    >
+      ENTER NEW CATEGORY
+    </a>
+  </div>
+</div>
+{% endif %} {% endblock content %}

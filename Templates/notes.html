@@ -12,53 +12,83 @@
 
 <legend class="border-bottom mb-4 h4 text-muted">YOUR NOTES</legend>
 
-<div class="container d-flex justify-content-center">
+<div class="container d-flex">
   <a
-    class="w-25 btn btn-primary me-2 btn-lg mr-3"
+    class="w-25 btn btn-primary me-2 btn-lg mr-3 mb-2"
     type="button"
     href="{{ url_for('add_note')}}"
   >
     ENTER NEW NOTE
   </a>
-  <a
-    class="w-25 btn btn-secondary me-2 btn-lg mr-3"
-    type="button"
-    href="{{ url_for('add_note')}}"
-  >
-    SEARCH BY NAME
-  </a>
-
-  <a
-    class="w-25 btn btn-secondary me-2 btn-lg mr-3"
-    type="button"
-    href="{{ url_for('add_note')}}"
-  >
-    CHOOSE CATEGORY
-  </a>
 </div>
 
-<div class="container mt-4 text-center">
+<div class="container d-flex flex-row justify-content-between">
+  <div>
+    <button class="btn btn-secondary me-2 btn-lg mr-3" disabled>
+      SEARCH BY NAME
+    </button>
+  
+    
+
+    <div>
+      <form method="POST" action="{{ url_for('notes', id=notes['id']) }}">
+        <div class="w-25">
+          {{ form.hidden_tag() }} {{ form.description(class="btn btn-secondary
+          btn-lg", onchange="this.form.submit()") }}
+        </div>
+      </form>
+    </div>
+
+   
+
+
+  </div>
+
+  <div class="d-flex">
+    <button class="btn btn-secondary me-2 btn-lg mr-3" disabled>
+      CHOOSE CATEGORY
+    </button>
+    <div>
+      <form method="POST" action="{{ url_for('notes', id=notes['id']) }}">
+        <div class="w-25">
+          {{ form.hidden_tag() }} {{ form.category(class="btn btn-secondary
+          btn-lg", onchange="this.form.submit()") }}
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="container mt-2 text-center">
   {% if notes != 0 %} {% for note in notes %}
 
-  <div class="container list-group-item d-inline-flex m-2">
-    <div class="container d-flex flex-column m-2">
-      <div class="container d-inline-flex m-2">
-        <div>
-          <img
-            class="rounded-rounded account-img"
-            src="/static/images/{{ note.photo }}"
-          />
-        </div>
+  <div class="container list-group-item d-inline-flex">
+    <div class="d-flex align-items-center">
+      <img
+        class="rounded-rounded account-img"
+        src="/static/images/{{ note.photo }}"
+      />
+    </div>
+    <div class="container d-flex flex-column">
+      <div class="container d-inline-flex">
         <div class="card-body">
-          <h3>{{note.description}}</h3>
+          <h5>{{note.description}}</h5>
           <p class="btn btn-warning disabled w-25">{{note.category}}</p>
           <p class="h5 text-muted">{{note.date.strftime('%Y-%m-%d')}}</p>
-          <p class="list-group-item card-text h4 my-3">{{note.text}}</p>
+          <p class="list-group-item card-text h5">{{note.text}}</p>
         </div>
       </div>
-      <div class="border-top pt-2">
-        <a href="{{ url_for('edit_note', id=note['id'])}}" class="btn btn-primary w-25">EDIT</a>
-        <a href="{{ url_for('delete_note', id=note['id'])}}" class="btn btn-primary w-25">DELETE</a>
+      <div class="pt-1">
+        <a
+          href="{{ url_for('edit_note', id=note['id'])}}"
+          class="btn btn-primary w-25"
+          >EDIT</a
+        >
+        <a
+          href="{{ url_for('delete_note', id=note['id'])}}"
+          class="btn btn-primary w-25"
+          >DELETE</a
+        >
       </div>
     </div>
   </div>
@@ -81,6 +111,7 @@
     href="{{ url_for('notes', page=page_num) }}"
     >{{ page_num }}</a
   >
+
   {% endif %} {% else %} ... {% endif %} {% endfor %}
 </div>
 
