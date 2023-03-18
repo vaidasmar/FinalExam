@@ -41,9 +41,8 @@
     >
     {% endif %} {% else %} ... {% endif %} {% endfor %}
   </div>
- {% endif %}
-{% if categories != 0 %} {% for category in categories %}
-
+  {% endif %} {% if categories != 0 %} 
+ 
   <div class="container d-flex justify-content-center">
     <a
       class="w-25 btn btn-success me-2 btn-lg mr-3"
@@ -63,9 +62,9 @@
       BACK TO NOTES
     </a>
   </div>
-
-  
+ 
   {% else %}
+ 
   <h2 class="text-muted">Your Category List is Empty</h2>
 
   <div class="container d-flex justify-content-center">
@@ -78,5 +77,4 @@
     </a>
   </div>
 </div>
-{% endfor %}
-{% endif %} {% endblock content %}
+ {% endif %} {% endblock content %}
