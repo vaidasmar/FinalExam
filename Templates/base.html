@@ -47,18 +47,17 @@
     >
       <div class="container">
         <h3 class="navbar-brand">CREATE YOUR NOTES</h3>
-       
+
         <div class="collapse navbar-collapse" id="navbarResponsive">
           <ul class="navbar-nav ml-auto">
-         
             {% if current_user.is_authenticated %}
             <h3 class="navbar-brand">Wellcome {{user}}</h3>
             <li class="nav-item">
               <a class="btn btn-dark mr-2" href="/">Home</a>
-            </li>    
+            </li>
             <li class="nav-item">
               <a class="btn btn-dark mr-2" href="/categories">Categories</a>
-            </li> 
+            </li>
             <li class="nav-item">
               <a class="btn btn-dark" href="/logout">Log Out</a>
             </li>

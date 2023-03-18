@@ -1,9 +1,8 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import StringField, TextAreaField, SubmitField, PasswordField, IntegerField, BooleanField, SelectField
+from wtforms import StringField, SubmitField, PasswordField, BooleanField, SelectField
 from wtforms.validators import DataRequired, Length, EqualTo, Email
-from wtforms_sqlalchemy.fields import QuerySelectField
-from app import Category
+
 
 
 class RegistrationForm(FlaskForm):
@@ -30,17 +29,4 @@ class CategoryForm(FlaskForm):
 class UpdatePhoto(FlaskForm):
     photo = FileField('Add photo', validators=[DataRequired(), FileAllowed(['jpg', 'png'])])
     submit = SubmitField('SUBMIT')
-
-
-class FilterNotesByCategory(FlaskForm):
-    status = SelectField('Category', choices=[
-                         ('PENDING'), ('IN_PROGRESS'), ('COMPLETED'), ('CANCELED')])
-
-
-# class NoteForm(FlaskForm):
-#     description = StringField('Description', [DataRequired(), Length(max=200)])
-#     text = TextAreaField('Text', [DataRequired(), Length(max=500)])
-#     photo = FileField('Add photo', validators=[DataRequired(), FileAllowed(['jpg', 'png'])])
-#     cat = QuerySelectField('Category', query_factory=Category.query.all)
-#     submit = SubmitField('SUBMIT')
 

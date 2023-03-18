@@ -1,15 +1,13 @@
-{% extends "base.html" %} {% block content %} 
-{% if current_user.is_authenticated %} 
-{% if categories != 0 %}{% for category in categories %}
+{% extends "base.html" %} {% block content %} {% if
+current_user.is_authenticated %} {% if categories != 0 %}{% for category in
+categories %}
 
 <meta http-equiv="refresh" content="0; URL=http://127.0.0.1:8080/notes" />
 
 {% else %}
 <meta http-equiv="refresh" content="0; URL=http://127.0.0.1:8080/categories" />
 
-{% endfor %}{% endif %} 
-
-{% else %}
+{% endfor %}{% endif %} {% else %}
 
 <meta http-equiv="refresh" content="0; URL=http://127.0.0.1:8080/login" />
 

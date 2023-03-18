@@ -4,22 +4,18 @@ import forms
 from datetime import datetime
 from flask_marshmallow import Marshmallow
 from flask_bcrypt import Bcrypt
-from flask_login import LoginManager, UserMixin, current_user, logout_user, login_user, login_required
+from flask_login import LoginManager, UserMixin, current_user, logout_user, login_user
 from flask import Flask, request, render_template, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
-from flask_admin import Admin
-from flask_admin.contrib.sqla import ModelView
-from enum import Enum
 from sqlalchemy.orm import backref
 from sqlalchemy.exc import IntegrityError
 from flask_wtf.csrf import CSRFProtect
 import secrets
 from PIL import Image
-
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import StringField, TextAreaField, SubmitField
+from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired, Length
 from wtforms_sqlalchemy.fields import QuerySelectField
 
@@ -246,8 +242,7 @@ class FilterNotesByCategory(FlaskForm):
 
 
 class FilterNotesByName(FlaskForm):
-    description = QuerySelectField('Select description', query_factory=lambda: Notes.query.filter_by(
-        user_id=current_user.id).all(), get_label='description')
+    description = StringField('Enter name', [Length(max=100)])
 
 
 # ******************************** Notes LIST *********************************
@@ -262,20 +257,21 @@ def notes():
         page = request.args.get('page', 1, type=int)
         categories = Category.query.filter_by(
             user_id=current_user.id).all()
-        if form.category.data:         
-            category = form.category.data           
+        if form_name.description.data:
+            description = form_name.description.data
+            searching_name = Notes.query.filter_by(user_id=current_user.id).filter(
+                Notes.description.like('%' + description + '%')).all()
+        else:
+            searching_name = 0
+
+        if form.category.data:
+            category = form.category.data
             notes = Notes.query.filter_by(
-                user_id=current_user.id, category=category.description).paginate(page=page, per_page=3)           
+                user_id=current_user.id, category=category.description).paginate(page=page, per_page=3)
         else:
             notes = Notes.query.filter_by(
                 user_id=current_user.id).paginate(page=page, per_page=3)
-        if form_name.description.data:
-            description = form_name.description.data
-            seaching_name = Notes.query.filter_by(
-                user_id=current_user.id, description=description.description).paginate(page=page, per_page=3)  
-            print(description)
-            print(seaching_name)
-        return render_template("notes.html", form=form, notes=notes, categories=categories, user=current_user.user)
+        return render_template("notes.html", form_name=form_name, form=form, searching_name=searching_name, notes=notes, categories=categories, user=current_user.user)
     else:
         return render_template("index.html")
 
