@@ -1,0 +1,15 @@
+{% extends "base.html" %} {% block content %}
+
+<form method="POST" action="#">
+  {{ form.hidden_tag() }}
+  <legend class="border-bottom mb-4 text-muted h4 text-muted">
+    Edit your shopping
+  </legend>
+  <div class="form-group">
+    {{ form.description.label(class="form-control-label h5 text-muted") }} {{
+    form.description(class="form-control", value=category.description) }}
+  </div>
+  <br />
+  {{ form.submit(class="btn btn-outline-info btn-lg px-5") }}
+</form>
+{% endblock %}

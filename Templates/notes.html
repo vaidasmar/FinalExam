@@ -1,0 +1,130 @@
+{% extends "base.html" %} {% block content %}
+
+<div class="container d-flex justify-content-center">
+  <a
+    class="w-25 btn btn-success me-2 btn-lg mr-3"
+    type="button"
+    href="{{ url_for('categories')}}"
+  >
+    CATEGORIES PAGE
+  </a>
+</div>
+
+<legend class="border-bottom mb-4 h4 text-muted">YOUR NOTES</legend>
+
+<div class="container d-flex">
+  <a
+    class="w-25 btn btn-primary me-2 btn-lg mr-3 mb-2"
+    type="button"
+    href="{{ url_for('add_note')}}"
+  >
+    ENTER NEW NOTE
+  </a>
+</div>
+
+<div class="container d-flex flex-row justify-content-between">
+  <div class="d-flex">
+    <button class="btn btn-secondary me-2 btn-lg mr-3" disabled>
+      SEARCH BY NAME
+    </button>
+
+    <div>
+      <form method="POST" action="{{ url_for('notes', id=notes['id']) }}">
+        <div class="w-25 d-flex">
+          {{ form_name.hidden_tag() }} {{ form_name.description(class="btn
+          btn-outline-secondary btn-lg", onchange="this.form_name.submit()") }}
+          <input
+            class="btn btn-secondary btn-lg ml-3"
+            type="submit"
+            value="Search"
+          />
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="d-flex">
+    <button class="btn btn-secondary me-2 btn-lg mr-3" disabled>
+      CHOOSE CATEGORY
+    </button>
+    <div>
+      <form method="POST" action="{{ url_for('notes', id=notes['id']) }}">
+        <div class="w-25">
+          {{ form.hidden_tag() }} {{ form.category(class="btn btn-secondary
+          btn-lg", onchange="this.form.submit()") }}
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="container mt-2 text-center">
+  {% if searching_name != 0 %}
+  <legend class="border-bottom mb-4 h4 text-muted">Searching result:</legend>
+  {% for search in searching_name%}
+
+  <div class="container list-group-item">
+    <div class="container d-flex flex-row justify-content-between">
+      <h5>Name: {{search.description}}</h5>
+      <p class="h5 text-muted">Category: {{search.category}}</p>
+      <p class="h5 text-muted">Date: {{search.date.strftime('%Y-%m-%d')}}</p>
+      <p class="h5 text-muted">Text: {{search.text}}</p>
+    </div>
+  </div>
+
+  {% endfor %} {% endif %} {% if notes != 0 %} {% for note in notes%}
+
+  <div class="container list-group-item d-inline-flex">
+    <div class="d-flex align-items-center">
+      <img
+        class="rounded-rounded account-img"
+        src="/static/images/{{ note.photo }}"
+      />
+    </div>
+    <div class="container d-flex flex-column">
+      <div class="container d-inline-flex">
+        <div class="card-body">
+          <h5>{{note.description}}</h5>
+          <p class="btn btn-warning disabled w-25">{{note.category}}</p>
+          <p class="h5 text-muted">{{note.date.strftime('%Y-%m-%d')}}</p>
+          <p class="list-group-item card-text h5">{{note.text}}</p>
+        </div>
+      </div>
+      <div class="pt-1">
+        <a
+          href="{{ url_for('edit_note', id=note['id'])}}"
+          class="btn btn-primary w-25"
+          >EDIT</a
+        >
+        <a
+          href="{{ url_for('delete_note', id=note['id'])}}"
+          class="btn btn-primary w-25"
+          >DELETE</a
+        >
+      </div>
+    </div>
+  </div>
+
+  {% else %}
+  <h2 class="text-muted">Your Notes is Empty</h2>
+</div>
+
+{% endfor %} {% endif %}
+
+<div class="mt-3 d-flex justify-content-center">
+  {% for page_num in notes.iter_pages(left_edge=1, right_edge=1, left_current=1,
+  right_current=2) %} {% if page_num %} {% if notes.page == page_num %}
+  <a class="btn btn-info mb-4 mr-2" href="{{ url_for('notes', page=page_num) }}"
+    >{{ page_num }}</a
+  >
+  {% else %}
+  <a
+    class="btn btn-outline-info mb-4 mr-2"
+    href="{{ url_for('notes', page=page_num) }}"
+    >{{ page_num }}</a
+  >
+
+  {% endif %} {% else %} ... {% endif %} {% endfor %}
+</div>
+
+{% endblock content %}
